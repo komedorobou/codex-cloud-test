@@ -5,18 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Codex Cloud Test</title>
 <style>
-  body{font-family:system-ui,"Noto Sans JP",sans-serif;margin:0;display:grid;place-items:center;min-height:100vh;background:#0f1218;color:#e7ebf3}
+  :root{--bg:#0f1218;--text:#e7ebf3;--muted:#8b93a7;--button-bg:#1b2230;--button-border:#30394a;--button-hover:#242c3a}
+  :root[data-theme="light"]{--bg:#f6f7f9;--text:#1d2430;--muted:#667085;--button-bg:#ffffff;--button-border:#d6dbe3;--button-hover:#eef1f5}
+  body{font-family:system-ui,"Noto Sans JP",sans-serif;margin:0;display:grid;place-items:center;min-height:100vh;background:var(--bg);color:var(--text);transition:background-color .2s ease,color .2s ease}
+  .theme-toggle{position:fixed;top:20px;right:20px;border:1px solid var(--button-border);border-radius:999px;background:var(--button-bg);color:var(--text);font:600 14px/1 system-ui,"Noto Sans JP",sans-serif;padding:10px 14px;cursor:pointer;transition:background-color .2s ease,border-color .2s ease,color .2s ease}
+  .theme-toggle:hover{background:var(--button-hover)}
+  .theme-toggle:focus-visible{outline:2px solid #1463ff;outline-offset:3px}
   .card{text-align:center;padding:40px}
   h1{font-size:clamp(28px,6vw,56px);margin:0 0 12px;letter-spacing:-.02em}
-  p{color:#8b93a7;margin:0}
+  p{color:var(--muted);margin:0}
   .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#1463ff;margin-right:8px;vertical-align:middle}
 </style>
+<script>
+  (function(){
+    var savedTheme = localStorage.getItem("theme");
+    var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    document.documentElement.dataset.theme = savedTheme || (prefersLight ? "light" : "dark");
+  })();
+</script>
 </head>
 <body>
+  <button class="theme-toggle" type="button" aria-label="表示モードを切り替え">ライトモード</button>
   <div class="card">
     <h1><span class="dot"></span>Codex Cloud Test</h1>
     <p>このページをCodex Cloudが編集できるかのテスト用です。</p>
     <!-- TODO: ここにCodexで機能を追加していく（ボタン・ダークモード切替など） -->
   </div>
+  <script>
+    (function(){
+      var root = document.documentElement;
+      var button = document.querySelector(".theme-toggle");
+
+      function setTheme(theme){
+        root.dataset.theme = theme;
+        localStorage.setItem("theme", theme);
+        button.textContent = theme === "dark" ? "ライトモード" : "ダークモード";
+        button.setAttribute("aria-pressed", theme === "light");
+      }
+
+      setTheme(root.dataset.theme || "dark");
+      button.addEventListener("click", function(){
+        setTheme(root.dataset.theme === "dark" ? "light" : "dark");
+      });
+    })();
+  </script>
 </body>
 </html>
