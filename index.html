@@ -13,6 +13,7 @@
   .theme-toggle:focus-visible{outline:2px solid #1463ff;outline-offset:3px}
   .card{text-align:center;padding:40px}
   h1{font-size:clamp(28px,6vw,56px);margin:0 0 12px;letter-spacing:-.02em}
+  .digital-clock{display:inline-flex;align-items:center;justify-content:center;margin:0 0 18px;padding:10px 16px;border:1px solid var(--button-border);border-radius:10px;background:var(--button-bg);color:var(--text);font:700 clamp(24px,5vw,44px)/1 system-ui,"Noto Sans JP",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.04em;transition:background-color .2s ease,border-color .2s ease,color .2s ease}
   p{color:var(--muted);margin:0}
   .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#1463ff;margin-right:8px;vertical-align:middle}
 </style>
@@ -28,6 +29,7 @@
   <button class="theme-toggle" type="button" aria-label="表示モードを切り替え">ライトモード</button>
   <div class="card">
     <h1><span class="dot"></span>Codex Cloud Test</h1>
+    <div class="digital-clock" aria-label="現在時刻">--:--:--</div>
     <p>このページをCodex Cloudが編集できるかのテスト用です。</p>
     <!-- TODO: ここにCodexで機能を追加していく（ボタン・ダークモード切替など） -->
   </div>
@@ -35,6 +37,7 @@
     (function(){
       var root = document.documentElement;
       var button = document.querySelector(".theme-toggle");
+      var clock = document.querySelector(".digital-clock");
 
       function setTheme(theme){
         root.dataset.theme = theme;
@@ -43,7 +46,19 @@
         button.setAttribute("aria-pressed", theme === "light");
       }
 
+      function updateClock(){
+        var now = new Date();
+        var time = [now.getHours(), now.getMinutes(), now.getSeconds()].map(function(value){
+          return String(value).padStart(2, "0");
+        }).join(":");
+        clock.textContent = time;
+        clock.setAttribute("aria-label", "現在時刻 " + time);
+      }
+
       setTheme(root.dataset.theme || "dark");
+      updateClock();
+      setInterval(updateClock, 1000);
+
       button.addEventListener("click", function(){
         setTheme(root.dataset.theme === "dark" ? "light" : "dark");
       });
